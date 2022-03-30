@@ -1,0 +1,12 @@
+.DS_STORE
+.vscode/
+
+*.o
+*.so
+*.sys
+*.efi
+*.img
+*.iso
+
+cdrom/
+src/boot/_include
