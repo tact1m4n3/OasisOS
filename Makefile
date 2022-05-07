@@ -1,40 +1,45 @@
-# Build docker envirorment: docker build buildenv -t oasisos
+# Build docker envirorment: docker build buildenv -t oasis-os
 # Run docker envirorment:
-# --- Mac OS: docker run --rm -it -v "$(pwd)":/env oasisos
-# --- Windows: docker run --rm -it -v "%cd%":/env oasisos
+# --- Mac OS: docker run --rm -it -v "$(pwd)":/env oasis-os
+# --- Windows: docker run --rm -it -v "%cd%":/env oasis-os
 
-IMAGE := image.iso
+SYSROOT = sysroot
+IMAGE = image.iso
+KERNEL = oasis-kernel
 
-all: image
+NASM = nasm
+CC = gcc
+LD = ld
 
-image: $(IMAGE)
+KERNEL_SFLAGS = -f elf64
+KERNEL_CFLAGS = -c --freestanding -I kernel/include
+KERNEL_LDFLAGS = -n -nostdlib -T kernel/link.ld
 
-boot:
-ifeq ($(shell make -sqC src/boot || echo 1), 1)
-	$(MAKE) -C src/boot
-endif
+KERNEL_OBJS = $(patsubst %.asm, %.o, $(wildcard kernel/*.asm))
+KERNEL_OBJS += $(patsubst %.c, %.o, $(wildcard kernel/*.c))
+KERNEL_OBJS += $(patsubst %.asm, %.o, $(wildcard kernel/*/*.asm))
+KERNEL_OBJS += $(patsubst %.c, %.o, $(wildcard kernel/*/*.c))
 
-$(IMAGE): boot
-	./tools/mkiso.sh $@
+all: $(IMAGE)
 
-run_usb:
-	qemu-system-x86_64 -usb $(IMAGE)
+%.o : %.asm
+	mkdir -pv $(dir $@)
+	$(NASM) $(KERNEL_SFLAGS) -o $@ $^
 
-run_cdrom:
-	qemu-system-x86_64 -cdrom $(IMAGE)
+%.o : %.c
+	mkdir -pv $(dir $@)
+	$(CC) $(KERNEL_CFLAGS) -o $@ $^
 
-run_efi:
-	qemu-system-x86_64 -pflash OVMF.fd -cdrom $(IMAGE)
+$(KERNEL): $(KERNEL_OBJS)
+	mkdir -pv $(dir $@)
+	$(LD) $(KERNEL_LDFLAGS) -o $@ $^
+
+$(IMAGE): $(KERNEL)
+	cp $(KERNEL) $(SYSROOT)/boot
+	grub-mkrescue -o $@ $(SYSROOT)
 
 .PHONY: clean
 clean:
-	rm -f src/boot/*.o
-	rm -f src/boot/*.so
-	rm -f src/boot/efi/*.o
-	rm -f src/boot/bios/*.o
-	rm -f mbr.sys
-	rm -f boot.sys
-	rm -f bootx64.efi
-	rm -f efi.img
-	rm -f $(IMAGE)
-	rm -rf cdrom
+	rm -rf $(IMAGE)
+	rm -rf $(KERNEL)
+	rm -rf $(KERNEL_OBJS)

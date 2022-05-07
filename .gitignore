@@ -2,11 +2,6 @@
 .vscode/
 
 *.o
-*.so
-*.sys
-*.efi
-*.img
-*.iso
-
-cdrom/
-src/boot/_include
+/image.iso
+/oasis-kernel
+/sysroot/boot/oasis-kernel
