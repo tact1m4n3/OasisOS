@@ -12,13 +12,13 @@ CC = gcc
 LD = ld
 
 KERNEL_SFLAGS = -f elf64
-KERNEL_CFLAGS = -c --freestanding -I kernel/include
-KERNEL_LDFLAGS = -n -nostdlib -T kernel/link.ld
+KERNEL_CFLAGS = -c --freestanding -I src/kernel/include
+KERNEL_LDFLAGS = -n -nostdlib -T src/kernel/link.ld
 
-KERNEL_OBJS = $(patsubst %.asm, %.o, $(wildcard kernel/*.asm))
-KERNEL_OBJS += $(patsubst %.c, %.o, $(wildcard kernel/*.c))
-KERNEL_OBJS += $(patsubst %.asm, %.o, $(wildcard kernel/*/*.asm))
-KERNEL_OBJS += $(patsubst %.c, %.o, $(wildcard kernel/*/*.c))
+KERNEL_OBJS = $(patsubst %.asm, %.o, $(wildcard src/kernel/*.asm))
+KERNEL_OBJS += $(patsubst %.c, %.o, $(wildcard src/kernel/*.c))
+KERNEL_OBJS += $(patsubst %.asm, %.o, $(wildcard src/kernel/*/*.asm))
+KERNEL_OBJS += $(patsubst %.c, %.o, $(wildcard src/kernel/*/*.c))
 
 all: $(IMAGE)
 

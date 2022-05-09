@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include <ports.h>
+#include <memory.h>
 
 #define DEFAULT_COLOR 0x0f
 

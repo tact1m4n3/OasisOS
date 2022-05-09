@@ -35,7 +35,6 @@ static void print_with_args(char* fmt, va_list args) {
             continue;
         }
 
-        char* s;
         uint64_t base = 0;
         switch (*++fmt) {
             case 'c':

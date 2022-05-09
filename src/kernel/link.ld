@@ -2,7 +2,8 @@ ENTRY(start)
 
 SECTIONS
 {
-    . = 0x100000;
+    . = 1M;
+    kernel_start = .;
 
     .text BLOCK(4K) : ALIGN(4K)
     {
@@ -26,5 +27,5 @@ SECTIONS
         *(.rodata*)
     }
 
-    end = .;
+    kernel_end = .;
 }
