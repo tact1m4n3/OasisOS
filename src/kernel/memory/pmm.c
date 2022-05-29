@@ -71,7 +71,7 @@ void pmm_init() {
     while (multiboot_get_memory_area(i, &type, &start, &end)) {
         if (type == 1) {
             for (uint64_t j = start; j < end; j += PAGE_SIZE) {
-                if (!(multiboot_memory_used(j, PAGE_SIZE) || (start < (uint64_t)&kernel_end && start + PAGE_SIZE > (uint64_t)&kernel_start))) {
+                if (!(multiboot_is_memory_used(j, PAGE_SIZE) || (start < (uint64_t)&kernel_end && start + PAGE_SIZE > (uint64_t)&kernel_start))) {
                     pmm_free_frame(j);
                 }
             }

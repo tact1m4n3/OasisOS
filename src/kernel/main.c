@@ -9,8 +9,6 @@
 #include <pit.h>
 #include <memory.h>
 
-extern void* end;
-
 void kernel_main(uint64_t mboot_magic, void* mboot_info) {
     clear_screen();
 

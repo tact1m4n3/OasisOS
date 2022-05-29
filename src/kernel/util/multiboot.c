@@ -72,7 +72,7 @@ void multiboot_init(uint64_t magic, void* info) {
     }
 }
 
-int multiboot_memory_used(uint64_t start, uint64_t size) {
+int multiboot_is_memory_used(uint64_t start, uint64_t size) {
 #define overlap(st, sz) ((uint64_t)(st) < (start + size) && ((uint64_t)(st) + (sz)) > start)
     if (overlap(boot_data.bootloader, strlen(boot_data.bootloader))
         && overlap(boot_data.command_line, strlen(boot_data.command_line))
