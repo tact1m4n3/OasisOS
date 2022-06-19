@@ -32,7 +32,7 @@ static void* lookup_bitmap_location(uint64_t size) {
             for (uint64_t j = start; j < end; j += PAGE_SIZE) {
                 if (j + size > end) {
                     break;
-                } else if (multiboot_is_memory_used(j, size) || (start < (uint64_t)&kernel_end && start + size > (uint64_t)&kernel_start)) {
+                } else if (multiboot_is_memory_used(j, size) || (j < (uint64_t)&kernel_end && j + size > (uint64_t)&kernel_start)) {
                     continue;
                 } else {
                     return (void*)j;
@@ -71,9 +71,12 @@ void pmm_init() {
     while (multiboot_get_memory_area(i, &type, &start, &end)) {
         if (type == 1) {
             for (uint64_t j = start; j < end; j += PAGE_SIZE) {
-                if (!(multiboot_is_memory_used(j, PAGE_SIZE) || (start < (uint64_t)&kernel_end && start + PAGE_SIZE > (uint64_t)&kernel_start))) {
-                    pmm_free_frame(j);
+                if (multiboot_is_memory_used(j, PAGE_SIZE)
+                    || (start < (uint64_t)&kernel_end && start + PAGE_SIZE > (uint64_t)&kernel_start)
+                    || (start < (uint64_t)frame_bitmap + bitmap_size && start + PAGE_SIZE > (uint64_t)frame_bitmap)) {
+                    continue;
                 }
+                pmm_free_frame(j);
             }
         }
         i++;

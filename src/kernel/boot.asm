@@ -29,20 +29,20 @@ start:
     mov edi, eax
     mov esi, ebx
 
-    mov eax, PDPT
+    mov eax, PDP
     or eax, 0b11
     mov dword [PML4], eax
 
-    mov eax, PDT
+    mov eax, PD
     or eax, 0b11
-    mov dword [PDPT], eax
+    mov dword [PDP], eax
 
     mov ecx, 0
 .loop:
     mov eax, 0x200000
     mul ecx
     or eax, 0b10000011
-    mov dword [PDT + ecx * 8], eax
+    mov dword [PD + ecx * 8], eax
     inc ecx
     cmp ecx, 512
     jne .loop
@@ -92,9 +92,9 @@ realm64:
 align 4096
 PML4:
     resb 4096
-PDPT:
+PDP:
     resb 4096
-PDT:
+PD:
     resb 4096
 stack:
     resb 4096
